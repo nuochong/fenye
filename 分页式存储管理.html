@@ -1,0 +1,217 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>分页式存储管理</title>
+<link href="css/bootstrap.css" rel="stylesheet" type="text/css">
+<script type="text/javascript" src="js/jquery.min.js"></script>
+<script type="text/javascript" src="js/bootstrap.js"></script>
+</head>
+
+<body>
+
+<div class="container">
+    <div class="col-lg-6">
+    	<div class="col-lg-12">
+            <form>
+              <div class="form-group">
+                <label for="exampleInputEmail1">作业名</label>
+                <input type="text" class="form-control" id="exampleInputEmail1" placeholder="请输入作业名">
+              </div>
+              <div class="form-group">
+                <label for="exampleInputPassword1">作业名</label>
+                <input type="text" class="form-control" id="exampleInputPassword1" placeholder="请输入作业大小">
+              </div>
+              <button type="submit" class="btn btn-default" onClick="apply()">申请</button>
+            </form>
+        </div><!--[col-lg-12]end-->
+        <div class="col-lg-12">
+        	<h3>已申请页面</h3>
+            <ul class="list-group">
+              <li class="list-group-item">作业001，内存大小为3000，页面数为2</li>
+            </ul>
+            <button type="submit" class="btn btn-default" onClick="space_release(4);show();">释放</button>
+        </div><!--[col-lg-12]end-->
+    </div><!--[col-lg-6]end-->
+    <div class="col-lg-6">
+        <h3>总块号10，已分配<span id="space_user">0</span>，剩余<span id="space_release">0</span>，每块大小2048</h3>
+        <ul class="list-group">
+          <li class="list-group-item" id="0">空闲块号1</li>
+          <li class="list-group-item" id="1">空闲块号2</li>
+          <li class="list-group-item" id="2">空闲块号3</li>
+          <li class="list-group-item" id="3">空闲块号4</li>
+          <li class="list-group-item" id="4">空闲块号5</li>
+          
+          <li class="list-group-item" id="5">空闲块号6</li>
+          <li class="list-group-item" id="6">空闲块号7</li>
+          <li class="list-group-item" id="7">空闲块号8</li>
+          <li class="list-group-item" id="8">空闲块号9</li>
+          <li class="list-group-item" id="9">空闲块号10</li>
+          
+          <!--<li class="list-group-item">空闲块号11</li>
+          <li class="list-group-item">空闲块号12</li>
+          <li class="list-group-item">空闲块号13</li>
+          <li class="list-group-item">空闲块号14</li>
+          <li class="list-group-item">空闲块号15</li>
+          
+          <li class="list-group-item">空闲块号16</li>
+          <li class="list-group-item">空闲块号17</li>
+          <li class="list-group-item">空闲块号18</li>
+          <li class="list-group-item">空闲块号19</li>
+          <li class="list-group-item">空闲块号20</li>
+          
+          <li class="list-group-item">空闲块号21</li>
+          <li class="list-group-item">空闲块号22</li>
+          <li class="list-group-item">空闲块号23</li>
+          <li class="list-group-item">空闲块号24</li>
+          <li class="list-group-item">空闲块号25</li>
+          
+          <li class="list-group-item">空闲块号26</li>
+          <li class="list-group-item">空闲块号27</li>
+          <li class="list-group-item">空闲块号28</li>
+          <li class="list-group-item">空闲块号29</li>
+          <li class="list-group-item">空闲块号30</li>
+          
+          <li class="list-group-item">空闲块号31</li>
+          <li class="list-group-item">空闲块号32</li>-->
+        </ul>
+    </div><!--[col-lg-6]end-->
+</div><!--[container]end-->
+
+<script>
+
+var piece_size=2048;
+var piece_num=0;
+var piece_surplus=0;
+
+//初始化二维数组
+var game_array = new Array();
+for(var k=0;k<10;k++){	
+	game_array[k]=new Array();
+	for(var	n=0;n<4;n++){
+		game_array[k][n]=n;	
+	}
+}
+//测试二维数组，可忽略
+//var str='';
+//for(var k=0;k<10;k++){	
+//	for(var	n=0;n<4;n++){
+//		str+=game_array[k][n];	
+//	}
+//	document.write("<br/>"+str);
+//	str='';
+//}
+
+//测试数据
+game_array[0][0]=1;
+game_array[1][0]=0;	
+game_array[2][0]=3;	
+game_array[3][0]=0;	
+game_array[4][0]=4;
+game_array[5][0]=0;
+game_array[6][0]=6;
+game_array[7][0]=7;
+game_array[8][0]=0;
+
+
+//计算所需要的总的页数和最后一页占用的空间 
+function space_divide(size){
+	piece_num= Math.ceil(size/2048);
+	piece_surplus=size%2048;	
+	alert("需要"+piece_num+"个块"+"最后一页占用空间"+piece_surplus);
+}
+		
+var max = game_array[0][0];
+var next_name=1;
+var check_state=1;
+function max_num(){
+	for(var i=1;i<game_array.length;i++){ //二维数组的行数game_array.length
+	  if(max<game_array[i][0])max=game_array[i][0];
+	}
+	next_name=max+1;	
+	alert("下一个新增的作业是"+next_name);
+}
+//space_divide(3000);
+//max_num();
+
+var check_space_num=0;
+function check_space(){
+	for(var k=0;k<10;k++){
+		if(	game_array[k][0]==0){
+			check_space_num++;
+			//alert("为0的是"+k);
+		}
+	}
+	document.getElementById("space_user").innerHTML=10-check_space_num;
+	document.getElementById("space_release").innerHTML=check_space_num;
+	//alert("haha"+check_space_num);
+	return check_space_num;
+	check_space_num=0;
+	
+}
+
+//alert(check_space());
+function space_release(name){alert(name);
+	for(var k=0;k<10;k++){	
+		if(game_array[k][0]==name){
+			//alert(k+"块空闲可用")
+			//alert("fdf");;
+			game_array[k][0]=0;
+			game_array[k][1]=0;
+			//game_array[k][2]=k+1;
+			game_array[k][3]=0;
+		}else{
+			//alert(k+"块以使用");	
+		}
+	} 
+}
+
+function space_write(){
+	for(var k=0;k<10;k++){	
+		if(game_array[k][0]==0&&piece_num!=0){
+			alert(k+"块空闲可用")
+			//alert("fdf");
+			game_array[k][0]=next_name;
+			game_array[k][1]=check_state;
+			//game_array[k][2]=k+1;
+			if(	piece_num==1){
+				game_array[k][3]=piece_surplus;
+			}else{
+				game_array[k][3]=2048;
+			}
+			//alert(piece_num);
+			//document.getElementById(k).innerHTML="作业名"+game_array[k][0]+",页号"+game_array[k][1]+",此作业的下一个块号"+game_array[k][2]+",占用空间"+game_array[k][3];
+			check_state++;
+			piece_num--;
+		}else{
+			//alert(k+"块以使用");	
+		}
+	} 
+	check_state=1;
+} 
+
+//space_write();
+function show(){
+	for(var k=0;k<10;k++){	
+		//str+=game_array[k][n];	
+		document.write("<br/>作业名"+game_array[k][0]+",页号"+game_array[k][1]+",此作业的下一个块号"+game_array[k][2]+",占用空间"+game_array[k][3]);
+		//str='';
+	}
+}
+show();
+function apply(){
+	space_divide(3000);
+	//alert(check_space()+"   "+piece_num);
+	if(check_space()>=piece_num){
+		alert("空间满足");
+		max_num();
+		space_write();
+		show();	
+	}else{
+		alert("存储空间不足！");	
+	}
+}
+//check_space();
+</script>
+</body>
+</html>

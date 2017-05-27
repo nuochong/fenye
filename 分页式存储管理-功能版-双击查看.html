@@ -1,0 +1,204 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>test</title>
+</head>
+
+<body>
+<span id="test3"></span><br/>
+
+<input type="text" id="sq" placeholder="请输入申请的大小" value="3000"  onkeyup="this.value=this.value.replace(/\D/g,'')" onafterpaste="this.value=this.value.replace(/\D/g,'')"/>
+<input type="text" id="sf" placeholder="请输入要释放的作业名" onkeyup="this.value=this.value.replace(/\D/g,'')" onafterpaste="this.value=this.value.replace(/\D/g,'')"/>
+<button type="button" onClick="apply()">申请</button>
+<button type="button" onClick="space_release();">释放</button>
+<span id="zone"></span>
+<br/>
+<span id="test1"></span>
+<span id="test2"></span>
+<br/>
+<span id="test4"></span>
+<script>
+var piece_size=2048;
+var piece_num=0;
+var piece_surplus=0;
+var check_space_num=0;
+//初始化二维数组
+var game_array = new Array();
+for(var k=0;k<10;k++){	
+	game_array[k]=new Array();
+	for(var	n=0;n<4;n++){
+		game_array[k][n]=0;	
+	}
+}
+//测试二维数组，可忽略
+//var str='';
+//for(var k=0;k<10;k++){	
+//	for(var	n=0;n<4;n++){
+//		str+=game_array[k][n];	
+//	}
+//	document.write("<br/>"+str);
+//	str='';
+//}
+
+//测试数据
+//game_array[0][0]=1;
+//game_array[1][0]=0;	
+//game_array[2][0]=3;	
+//game_array[3][0]=0;	
+//game_array[4][0]=4;
+//game_array[5][0]=5;
+//game_array[6][0]=6;
+//game_array[7][0]=7;
+//game_array[8][0]=0;
+
+
+//计算所需要的总的页数和最后一页占用的空间 
+function space_divide(size){
+	piece_num= Math.ceil(size/2048);
+	piece_surplus=size%2048;
+	//document.getElementById("test1").innerHTML="需要"+piece_num+"个块"+"最后一页占用空间"+piece_surplus;
+}
+		
+var max = game_array[0][0];
+var next_name=1;
+var check_state=1;
+function max_num(){
+	for(var i=1;i<game_array.length;i++){ //二维数组的行数game_array.length
+	  if(max<game_array[i][0])max=game_array[i][0];
+	}
+	next_name=max+1;	
+	//alert("下一个新增的作业是"+next_name);
+}
+//space_divide(3000);
+max_num();
+
+
+function check_space(){
+	for(var k=0;k<10;k++){
+		if(	game_array[k][0]==0){
+			check_space_num++;
+			//alert("有空位");
+		}
+	}
+	//alert("空余位置"+check_space_num);
+	//return check_space_num;
+	
+}
+//alert(check_space());
+function space_release(){//alert(name);
+var state=0;
+var sf_num=document.getElementById("sf").value;
+	//alert("输入释放的值是"+sf_num);
+	for(var k=0;k<10;k++){	
+		if(game_array[k][0]==sf_num&&game_array[k][0]!=0){
+			//alert(k+"块空闲可用")
+			//alert("fdf");
+			game_array[k][0]=0;
+			game_array[k][1]=0;
+			//game_array[k][2]=k+1;
+			game_array[k][3]=0;
+		}else{
+			//alert("您输入的作业名有误");
+			state++;
+		}
+	}
+	if(state==10){alert("您输入的作业名不存在");};
+	show(); 
+}
+
+function space_write(){
+	for(var k=0;k<10;k++){	
+		if(game_array[k][0]==0&&piece_num!=0){
+			//alert(k+"块空闲可用")
+			game_array[k][0]=next_name;
+			game_array[k][1]=check_state;
+			//game_array[k][2]=k+1;
+			//alert(piece_num);
+			if(	piece_num==1){
+				if(piece_surplus!=0){game_array[k][3]=piece_surplus;//当输入为2048倍数时的处理
+				}else{
+					game_array[k][3]=2048;
+				}
+			}else{
+				game_array[k][3]=2048;
+			}
+			check_state++;
+			piece_num--;
+		}else{
+			//alert(k+"块以使用");	
+		}
+	} 
+	check_state=1;
+} 
+
+space_write();
+var strs='';
+function show(){
+	for(var k=0;k<10;k++){
+		if(game_array[k][0]==0){
+			strs+="<br/>空闲块号"+k;
+		}else{
+			strs+="<br/>作业名"+game_array[k][0]+",页号"+game_array[k][1]+",块号"+k/*+",此作业的下一个块号"+game_array[k][2]*/+",占用空间"+game_array[k][3];
+		}
+		
+	}
+	document.getElementById("zone").innerHTML=strs;
+	strs='';
+	guide();
+	check_space_num=0;
+}
+show();
+function show_left(){
+	for(var k=0;k<10;k++){
+		if(game_array[k][0]!=0){
+			strs+="<br/>作业名"+game_array[k][0]+",内存大小"+game_array[k][1]+",页面数";
+		}		
+	}
+	document.getElementById("test4").innerHTML=strs;
+	strs='';
+	guide();
+	check_space_num=0;
+}
+
+//检查是否为数字
+function check(){
+var temp=/^\d+(\.\d+)?$/;
+var s = document.getElementById("test");
+alert(temp.test(s.value));
+}
+
+function guide(){
+	//alert("已分配"+yifenpei+",剩余"+check_space_num);
+	check_space();
+	var zong=game_array.length+1;
+	var yifenpei=game_array.length-check_space_num;
+	document.getElementById("test3").innerHTML="总块号"+zong+",已分配"+yifenpei+",剩余"+check_space_num+",每块大小"+2048;
+
+}
+
+function apply(){
+	var sq_num=document.getElementById("sq").value;
+	if(sq_num!=null||sq_num!=''){
+		//alert("输入申请的值是"+sq_num);
+		space_divide(sq_num);
+		check_space();
+		if(check_space_num>=piece_num){
+			//alert("空间满足");
+			//alert(check_space_num+"  "+piece_num);
+			max_num();
+			space_write();
+			check_space_num=0;//这里一定要将其清零，否则在guid中调用时数值会叠加
+			show();			
+		}else{
+			alert("存储空间不足！");	
+		}
+		
+	}else{
+		alert("请输入正确的数值");	
+	}	
+}
+
+</script>
+</body>
+</html>
