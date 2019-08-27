@@ -1,226 +1,232 @@
 <!DOCTYPE HTML>
 <html>
+
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-<title>分页式存储管理</title>
-<link href="css/bootstrap.css" rel="stylesheet" type="text/css">
-<link href="css/bootstrap-theme.min.css" rel="stylesheet" type="text/css">
-<script type="text/javascript" src="js/jquery.min.js"></script>
-<script type="text/javascript" src="js/bootstrap.js"></script>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <title>分页式存储管理</title>
+  <link href="css/bootstrap.css" rel="stylesheet" type="text/css">
+  <link href="css/bootstrap-theme.min.css" rel="stylesheet" type="text/css">
+  <script type="text/javascript" src="js/jquery.min.js"></script>
+  <script type="text/javascript" src="js/bootstrap.js"></script>
 </head>
 
 <body>
-
-<div class="container">
+  <div class="container">
     <div class="col-lg-6">
-        <h3>总块号10，已分配<span id="space_user">0</span>，剩余<span id="space_release">10</span>，每块大小2048</h3>
-        <ul class="list-group" id="zone">
-          	<li class="list-group-item">作业001，内存大小为3000，页面数为2</li>
-        </ul>
-    </div><!--[col-lg-6]end-->
+      <h3>总块号10，已分配<span id="space_user">0</span>，剩余<span id="space_release">10</span>，每块大小2048</h3>
+      <ul class="list-group" id="zone">
+        <li class="list-group-item">作业001，内存大小为3000，页面数为2</li>
+      </ul>
+    </div>
+    <!--[col-lg-6]end-->
     <div class="col-lg-6">
-    	<h3>分页式存储管理模拟</h3>
-    	<div class="col-lg-12">
-    		<!-- 这里一定要去除掉form标签，否则，点击按钮会导致页面刷新 -->
-          	<div class="form-group">
-            	<label for="exampleInputEmail1">内存大小</label>
-            	<input type="text" class="form-control" id="sq" value="3000" placeholder="请输入作业大小">
-          	</div>
-          	<button class="btn btn-default" onClick="apply()">申请</button>
-          	<div class="form-group">
-           	 	<label for="exampleInputPassword1">作业名</label>
-           		 <input type="text" class="form-control" id="sf" value="作业001" placeholder="请输入作业名称">
-          	</div>
-          	<button class="btn btn-default" onClick="release()">释放</button>
-        </div><!--[col-lg-12]end-->
-        <div class="col-lg-12">
-        	<!-- <div class="alert alert-warning alert-dismissible" role="alert">
+      <h3>分页式存储管理模拟</h3>
+      <div class="col-lg-12">
+        <!-- 这里一定要去除掉form标签，否则，点击按钮会导致页面刷新 -->
+        <div class="form-group">
+          <label for="exampleInputEmail1">内存大小</label>
+          <input type="text" class="form-control" id="sq" value="3000" placeholder="请输入作业大小">
+        </div>
+        <button class="btn btn-default" onClick="apply()">申请</button>
+        <div class="form-group">
+          <label for="exampleInputPassword1">作业名</label>
+          <input type="text" class="form-control" id="sf" value="作业001" placeholder="请输入作业名称">
+        </div>
+        <button class="btn btn-default" onClick="release()">释放</button>
+      </div>
+      <!--[col-lg-12]end-->
+      <div class="col-lg-12">
+        <!-- <div class="alert alert-warning alert-dismissible" role="alert">
 				<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
 				<strong>警告!</strong> <span id="warning">Better check yourself, you're not looking too good.</span>
 			</div> -->
-        </div><!--[col-lg-12]end-->
-    </div><!--[col-lg-6]end-->
-</div><!--[container]end-->
+      </div>
+      <!--[col-lg-12]end-->
+    </div>
+    <!--[col-lg-6]end-->
+  </div>
+  <!--[container]end-->
 
-<script>
-var piece_size=2048;
-var piece_num=0;
-var piece_surplus=0;
-//初始化二维数组
-var game_array = new Array();
-for(var k=0;k<10;k++){	
-	game_array[k]=new Array();
-	for(var	n=0;n<4;n++){
-		game_array[k][n]=0;	
-	}
-}
-//测试二维数组，可忽略
-//var str='';
-//for(var k=0;k<10;k++){	
-//	for(var	n=0;n<4;n++){
-//		str+=game_array[k][n];	
-//	}
-//	document.write("<br/>"+str);
-//	str='';
-//}
+  <script>
+    var piece_size = 2048;
+    var piece_num = 0;
+    var piece_surplus = 0;
+    //初始化二维数组
+    var game_array = new Array();
+    for (var k = 0; k < 10; k++) {
+      game_array[k] = new Array();
+      for (var n = 0; n < 4; n++) {
+        game_array[k][n] = 0;
+      }
+    }
+    //测试二维数组，可忽略
+    //var str='';
+    //for(var k=0;k<10;k++){	
+    //	for(var	n=0;n<4;n++){
+    //		str+=game_array[k][n];	
+    //	}
+    //	document.write("<br/>"+str);
+    //	str='';
+    //}
 
-//测试数据
-// game_array[0][0]=1;
-// game_array[1][0]=0;	
-// game_array[2][0]=3;	
-// game_array[3][0]=0;	
-// game_array[4][0]=4;
-// game_array[5][0]=0;
-// game_array[6][0]=6;
-// game_array[7][0]=7;
-// game_array[8][0]=0;
+    //测试数据
+    // game_array[0][0]=1;
+    // game_array[1][0]=0;	
+    // game_array[2][0]=3;	
+    // game_array[3][0]=0;	
+    // game_array[4][0]=4;
+    // game_array[5][0]=0;
+    // game_array[6][0]=6;
+    // game_array[7][0]=7;
+    // game_array[8][0]=0;
 
-//计算所需要的总的页数和最后一页占用的空间 
-function space_divide(size){
-	piece_num= Math.ceil(size/2048);
-	piece_surplus=size%2048;	
-	//alert("需要"+piece_num+"个块"+"最后一页占用空间"+piece_surplus);
-}
-		
-var max = game_array[0][0];
-//下一个新增的作业名
-var next_name=1;
-var check_state=1;
-//查找当前最大的作业号
-function max_num(){
-	for(var i=1;i<game_array.length;i++){ //二维数组的行数game_array.length
-	  if(max<game_array[i][0])
-	  	max=game_array[i][0];
-	}
-	next_name=max+1;	
-	//alert("下一个新增的作业是"+next_name);
-}
+    //计算所需要的总的页数和最后一页占用的空间 
+    function space_divide(size) {
+      piece_num = Math.ceil(size / 2048);
+      piece_surplus = size % 2048;
+      //alert("需要"+piece_num+"个块"+"最后一页占用空间"+piece_surplus);
+    }
 
-//这里最好不要使用全局变量，会造成污染
-//var check_space_num=0;
-//统计已使用了多少块
-function check_space(){
-	var check_space_num=0;
-	for(var k=0;k<10;k++){
-		if(	game_array[k][0]==0){
-			check_space_num++;
-		}
-	}
-	//alert(check_space_num);
-	return check_space_num;
-}
+    var max = game_array[0][0];
+    //下一个新增的作业名
+    var next_name = 1;
+    var check_state = 1;
+    //查找当前最大的作业号
+    function max_num() {
+      for (var i = 1; i < game_array.length; i++) { //二维数组的行数game_array.length
+        if (max < game_array[i][0])
+          max = game_array[i][0];
+      }
+      next_name = max + 1;
+      //alert("下一个新增的作业是"+next_name);
+    }
 
-function display_check(){
-	var check_space_num = check_space();
-	document.getElementById("space_user").innerHTML=10-check_space_num;
-	document.getElementById("space_release").innerHTML=check_space_num;
-}
+    //这里最好不要使用全局变量，会造成污染
+    //var check_space_num=0;
+    //统计已使用了多少块
+    function check_space() {
+      var check_space_num = 0;
+      for (var k = 0; k < 10; k++) {
+        if (game_array[k][0] == 0) {
+          check_space_num++;
+        }
+      }
+      //alert(check_space_num);
+      return check_space_num;
+    }
 
-function space_write(){
-	for(var k=0;k<10;k++){	
-		if(game_array[k][0]==0&&piece_num!=0){
-			//alert(k+"块空闲可用")
-			//alert("fdf");
-			game_array[k][0]=next_name;
-			game_array[k][1]=check_state;
-			//game_array[k][2]=k+1;
-			if(	piece_num==1){
-				game_array[k][3]=piece_surplus;
-			}else{
-				game_array[k][3]=2048;
-			}
-			//alert(piece_num);
-			//document.getElementById(k).innerHTML="作业名"+game_array[k][0]+",页号"+game_array[k][1]+",此作业的下一个块号"+game_array[k][2]+",占用空间"+game_array[k][3];
-			check_state++;
-			piece_num--;
-		}else{
-			//alert(k+"块以使用");	
-		}
-	} 
-	check_state=1;
-} 
+    function display_check() {
+      var check_space_num = check_space();
+      document.getElementById("space_user").innerHTML = 10 - check_space_num;
+      document.getElementById("space_release").innerHTML = check_space_num;
+    }
 
-function check(id){
-	document.getElementById("sf").value=id;
-}
-//game_array[k][0] 作业的名称
-//game_array[k][1] 作业的页号
-//game_array[k][3] 作业中每块占用的空间
-//作业空闲块号使用k的循环号来标识
-//块号相当于k值
-function show(){
-	var str = '';
-	var colors;
-	var mouse_click;
-	var use_state;
-	var task_name;
-	var page_name;
-	var use_space;
-	for(var k=0;k<10;k++){
-		//要注意函数名和后面定义的变量名的区分，否则会出现这不是一个函数的提示
-		if(game_array[k][0]!=0){
-			use_state='占用块号 ' + k;
-			mouse_click='onClick="check(this.id);"';
-			colors='list-group-item-danger';
-			task_name='，作业号 '+game_array[k][0];
-			use_space='，占用空间 '+game_array[k][3];
-			page_name=', 页号 '+game_array[k][1];
-		}else{
-			use_state='空闲块号 '+k;
-			mouse_click=''
-			colors='list-group-item-success';
-			task_name='';
-			use_space='';
-			page_name='';
-		}
-		str+='<a href="#" class="list-group-item '+colors+'" id="'+game_array[k][0]+'"'+mouse_click+'>'+use_state+task_name+page_name+use_space+'</a>';	
-	}
-	document.getElementById("zone").innerHTML=str;
-}
+    function space_write() {
+      for (var k = 0; k < 10; k++) {
+        if (game_array[k][0] == 0 && piece_num != 0) {
+          //alert(k+"块空闲可用")
+          //alert("fdf");
+          game_array[k][0] = next_name;
+          game_array[k][1] = check_state;
+          //game_array[k][2]=k+1;
+          if (piece_num == 1) {
+            game_array[k][3] = piece_surplus;
+          } else {
+            game_array[k][3] = 2048;
+          }
+          //alert(piece_num);
+          //document.getElementById(k).innerHTML="作业名"+game_array[k][0]+",页号"+game_array[k][1]+",此作业的下一个块号"+game_array[k][2]+",占用空间"+game_array[k][3];
+          check_state++;
+          piece_num--;
+        } else {
+          //alert(k+"块以使用");	
+        }
+      }
+      check_state = 1;
+    }
 
-show();
+    function check(id) {
+      document.getElementById("sf").value = id;
+    }
+    //game_array[k][0] 作业的名称
+    //game_array[k][1] 作业的页号
+    //game_array[k][3] 作业中每块占用的空间
+    //作业空闲块号使用k的循环号来标识
+    //块号相当于k值
+    function show() {
+      var str = '';
+      var colors;
+      var mouse_click;
+      var use_state;
+      var task_name;
+      var page_name;
+      var use_space;
+      for (var k = 0; k < 10; k++) {
+        //要注意函数名和后面定义的变量名的区分，否则会出现这不是一个函数的提示
+        if (game_array[k][0] != 0) {
+          use_state = '占用块号 ' + k;
+          mouse_click = 'onClick="check(this.id);"';
+          colors = 'list-group-item-danger';
+          task_name = '，作业号 ' + game_array[k][0];
+          use_space = '，占用空间 ' + game_array[k][3];
+          page_name = ', 页号 ' + game_array[k][1];
+        } else {
+          use_state = '空闲块号 ' + k;
+          mouse_click = ''
+          colors = 'list-group-item-success';
+          task_name = '';
+          use_space = '';
+          page_name = '';
+        }
+        str += '<a href="#" class="list-group-item ' + colors + '" id="' + game_array[k][0] + '"' + mouse_click + '>' + use_state + task_name + page_name + use_space + '</a>';
+      }
+      document.getElementById("zone").innerHTML = str;
+    }
 
-function apply(){
-	var sq_num=document.getElementById("sq").value;
-	space_divide(sq_num);
-	//alert(check_space()+"   "+piece_num);
-	if(check_space()>=piece_num){
-		//alert("空间满足");
-		max_num();
-		space_write();
-		show();
-		display_check();
-	}else{
-		//warning("存储空间不足！");
-		alert("存储空间不足！");	
-	}
-	//alert('debug');
-}
+    show();
 
-function release(){
-	var num=parseInt(document.getElementById("sf").value);
-	var state=false;
-	var length = game_array.length;
-	for(var i=0;i<length;i++){
-		if(game_array[i][0]==num){
-			game_array[i][0] = 0;
-			game_array[i][1] = 0;
-			game_array[i][2] = 0;
-			state =true;
-		}
-		console.log(game_array[i][1]+'  '+num)
-	}
-	if(!state){
-		alert("此编号名无效！");
-	}else{
-		//只有当有释放空间的时候才运行合并方法
-		show();
-	}
-}
+    function apply() {
+      var sq_num = document.getElementById("sq").value;
+      space_divide(sq_num);
+      //alert(check_space()+"   "+piece_num);
+      if (check_space() >= piece_num) {
+        //alert("空间满足");
+        max_num();
+        space_write();
+        show();
+        display_check();
+      } else {
+        //warning("存储空间不足！");
+        alert("存储空间不足！");
+      }
+      //alert('debug');
+    }
+
+    function release() {
+      var num = parseInt(document.getElementById("sf").value);
+      var state = false;
+      var length = game_array.length;
+      for (var i = 0; i < length; i++) {
+        if (game_array[i][0] == num) {
+          game_array[i][0] = 0;
+          game_array[i][1] = 0;
+          game_array[i][2] = 0;
+          state = true;
+        }
+        console.log(game_array[i][1] + '  ' + num)
+      }
+      if (!state) {
+        alert("此编号名无效！");
+      } else {
+        //只有当有释放空间的时候才运行合并方法
+        show();
+      }
+    }
 
 // function warning(text){
 // 	document.getElementById("warning").innerHTML=text;
 // }
-</script>
+  </script>
 </body>
+
 </html>
